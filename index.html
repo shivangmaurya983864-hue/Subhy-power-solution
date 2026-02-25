@@ -3,127 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subhy Power Solution | Premium ERP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Subhy Power | Executive Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Plus+Jakarta+Sans:wght@200;400;600&display=swap" rel="stylesheet">
     
     <script src="database.js"></script>
 
     <style>
         :root {
-            --primary: #3b82f6;
-            --accent: #60a5fa;
-            --dark-bg: #0f172a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --deep-black: #050505;
+            --soft-white: #f5f5f7;
+            --royal-blue: #0066cc;
+            --accent-gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.08);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            margin: 0; padding: 0; display: flex; justify-content: center; align-items: center;
-            height: 100vh; background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow: hidden;
+            background-color: var(--deep-black);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--soft-white);
+            overflow: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
         }
 
-        /* Animated Background */
-        .bg-glow {
-            position: absolute; width: 500px; height: 500px; background: var(--primary);
-            filter: blur(150px); opacity: 0.15; z-index: -1; border-radius: 50%;
-            animation: move 10s infinite alternate;
+        .ambient-glow {
+            position: absolute; width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(0, 102, 204, 0.08) 0%, transparent 70%);
+            z-index: 0; pointer-events: none;
         }
 
-        @keyframes move {
-            from { transform: translate(-20%, -20%); }
-            to { transform: translate(20%, 20%); }
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+            padding: 20px;
+            transition: filter 0.5s ease;
         }
 
-        .hero-container {
-            text-align: center; background: var(--glass); padding: 60px 100px;
-            border-radius: 32px; backdrop-filter: blur(20px); border: 1px solid var(--border);
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7); position: relative;
+        .brand-box {
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeInBlur 1.5s forwards;
         }
 
-        .owner-badge {
-            background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary);
-            color: var(--accent); padding: 6px 16px; border-radius: 100px;
-            font-size: 0.8rem; font-weight: 600; display: inline-block;
-            margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase;
+        @keyframes fadeInBlur {
+            from { opacity: 0; filter: blur(10px); transform: translateY(20px); }
+            to { opacity: 1; filter: blur(0); transform: translateY(0); }
         }
 
-        .logo-icon {
-            font-size: 70px; margin-bottom: 15px; display: inline-block;
-            filter: drop-shadow(0 0 20px var(--primary));
-            animation: float 3s ease-in-out infinite;
+        .proprietor-tag {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 300;
+            font-size: 0.8rem;
+            letter-spacing: 8px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: block;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+        .main-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            color: white;
         }
 
-        h1 { font-size: 3.2rem; margin: 0; font-weight: 800; letter-spacing: -2px; line-height: 1.1; }
-        h1 span { background: linear-gradient(to bottom right, #fff, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .main-title span { font-weight: 300; color: #888; }
 
-        .tagline { color: #94a3b8; font-size: 1.2rem; margin: 20px 0 45px 0; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6; }
-
-        .nav-buttons { display: flex; gap: 25px; justify-content: center; }
-
-        .main-btn {
-            background: var(--primary); color: white; text-decoration: none;
-            padding: 18px 45px; border-radius: 16px; font-weight: 700;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.5); display: flex; align-items: center; gap: 10px;
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.8s;
         }
 
-        .main-btn:hover { transform: scale(1.05); background: #2563eb; }
-
-        .secondary-btn {
-            background: rgba(255, 255, 255, 0.05); color: white; text-decoration: none;
-            padding: 18px 45px; border-radius: 16px; font-weight: 700;
-            border: 1px solid var(--border); transition: 0.3s;
+        .nav-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            position: relative;
+            text-align: left;
         }
 
-        .secondary-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: white; }
+        .nav-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-8px);
+        }
 
-        .footer-tag { position: absolute; bottom: 40px; color: #475569; font-size: 0.85rem; text-align: center; }
+        .nav-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; margin-bottom: 8px; color: var(--soft-white); }
+        .nav-card p { font-size: 0.95rem; color: #777; }
+        .nav-card .arrow { position: absolute; right: 30px; bottom: 30px; font-size: 1.8rem; opacity: 0.3; transition: 0.3s; }
+        .nav-card:hover .arrow { opacity: 1; transform: translateX(5px); color: var(--royal-blue); }
+
+        /* --- PREMIUM PASSWORD MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #111;
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 32px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active { display: flex; }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .modal-card h2 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 10px; font-size: 1.5rem; }
+        .modal-card p { color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+
+        /* Input Wrapper for Eye Icon */
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .pass-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px; /* Padding for the eye */
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .pass-input:focus { border-color: var(--royal-blue); box-shadow: 0 0 15px rgba(0, 102, 204, 0.3); }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #555;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            user-select: none;
+        }
+        .toggle-password:hover { color: var(--royal-blue); }
+
+        .modal-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-unlock { background: var(--royal-blue); color: white; margin-bottom: 10px; }
+        .btn-unlock:hover { background: #0052a3; transform: scale(1.02); }
+        .btn-cancel { background: transparent; color: #555; }
+        .btn-cancel:hover { color: #888; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <div class="ambient-glow"></div>
 
-    <div class="hero-container">
-        <div class="owner-badge">Welcome back, Akhilesh Kumar</div>
-        
-        <div class="logo-icon">⚡</div>
-        <h1>Subhy Power<br><span>Solutions</span></h1>
-        
-        <p class="tagline">Next-Gen Inventory, Warranty Tracker & GST Billing for Inverter Professionals.</p>
+    <div class="container" id="mainContainer">
+        <div class="brand-box">
+            <span class="proprietor-tag">Akhilesh Kumar Presence</span>
+            <h1 class="main-title">SUBHY POWER<br><span>SOLUTIONS</span></h1>
+        </div>
 
-        <div class="nav-buttons">
-            <a href="dashboard.html" class="main-btn">
-                <span>Enter Dashboard</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-            <a href="billing.html" class="secondary-btn">New Invoice</a>
+        <div class="portal-grid">
+            <div class="nav-card" onclick="openGate('dashboard.html')">
+                <h3>Open Dashboard</h3>
+                <p>Check sales, stock and reports</p>
+                <span class="arrow">→</span>
+            </div>
+            
+            <div class="nav-card" onclick="openGate('billing.html')">
+                <h3>Make New Bill</h3>
+                <p>Create and print GST invoice</p>
+                <span class="arrow">→</span>
+            </div>
         </div>
     </div>
 
-    <div class="footer-tag">
-        <strong>SUBHY POWER SOLUTIONS ERP v2.0</strong><br>
-        <span>Securely hosted for optimal performance</span>
+    <div class="modal-overlay" id="securityModal">
+        <div class="modal-card">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+            <h2>Security Check</h2>
+            <p id="modalTask">Enter admin password to continue</p>
+            
+            <div class="input-wrapper">
+                <input type="password" id="passCode" class="pass-input" placeholder="••••" autofocus>
+                <span class="toggle-password" id="togglePass" onclick="togglePasswordVisibility()">👁️</span>
+            </div>
+
+            <button class="modal-btn btn-unlock" onclick="verifyAccess()">Unlock Access</button>
+            <button class="modal-btn btn-cancel" onclick="closeGate()">Cancel</button>
+        </div>
     </div>
 
     <script>
-        // Database Initialization
+        let pendingPage = "";
+
+        function openGate(page) {
+            pendingPage = page;
+            document.getElementById('securityModal').classList.add('active');
+            document.getElementById('mainContainer').style.filter = "blur(10px)";
+            document.getElementById('passCode').focus();
+        }
+
+        function closeGate() {
+            document.getElementById('securityModal').classList.remove('active');
+            document.getElementById('mainContainer').style.filter = "none";
+            document.getElementById('passCode').value = "";
+            // Reset visibility to password when closing
+            const passInput = document.getElementById('passCode');
+            passInput.type = "password";
+            document.getElementById('togglePass').innerText = "👁️";
+        }
+
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('passCode');
+            const toggleIcon = document.getElementById('togglePass');
+            
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                toggleIcon.innerText = "🙈"; // Hide icon
+                passInput.style.letterSpacing = "2px"; // Adjust spacing for text
+            } else {
+                passInput.type = "password";
+                toggleIcon.innerText = "👁️"; // Show icon
+                passInput.style.letterSpacing = "5px"; // Restore dots spacing
+            }
+        }
+
+        function verifyAccess() {
+            const pass = document.getElementById('passCode').value;
+            if (pass === "AK@1999") {
+                window.location.href = pendingPage;
+            } else {
+                alert("❌ Wrong Password! Access Denied.");
+                document.getElementById('passCode').value = "";
+            }
+        }
+
+        document.getElementById('passCode').addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                verifyAccess();
+            }
+        });
+
         window.onload = function() {
             if (!localStorage.getItem("SubhyPower_MasterDB")) {
-                const initialDB = {
-                    billing: [],
-                    stock: [],
-                    customers: [],
-                    warranty: []
-                };
-                localStorage.setItem("SubhyPower_MasterDB", JSON.stringify(initialDB));
-                console.log("System Initialized for Subhy Power.");
+                localStorage.setItem("SubhyPower_MasterDB", JSON.stringify({billing:[], stock:[], customers:[], warranty:[]}));
             }
         }
     </script>
