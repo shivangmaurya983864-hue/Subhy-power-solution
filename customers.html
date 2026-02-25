@@ -10,13 +10,8 @@
 
     <style>
         :root {
-            --primary: #c21a09;
-            --secondary: #0a2e87;
-            --bg: #020617;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --accent: #3b82f6;
+            --primary: #c21a09; --secondary: #0a2e87; --bg: #020617;
+            --card: #ffffff; --text: #1e293b; --border: #e2e8f0; --accent: #3b82f6;
         }
 
         body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; display: flex; color: white; }
@@ -33,35 +28,35 @@
         .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
 
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .search-container { position: relative; width: 400px; }
         .search-input {
-            width: 100%; padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-            background: #1e293b; color: white; font-family: inherit; outline: none;
+            width: 400px; padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: #1e293b; color: white; outline: none;
         }
 
-        .card {
-            background: var(--card); color: var(--text); padding: 30px; border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
+        .card { background: var(--card); color: var(--text); padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
 
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; }
         td { padding: 18px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-        tr:hover { background: #fcfdfe; }
-
-        .user-info { display: flex; align-items: center; gap: 12px; }
+        
+        /* Clickable Profile */
+        .user-info { display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; }
+        .user-info:hover { transform: translateX(5px); }
         .avatar { 
             width: 35px; height: 35px; background: var(--secondary); color: white; 
             border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 14px; text-transform: uppercase;
+            font-weight: 800; font-size: 14px;
         }
 
-        .btn-call { text-decoration: none; color: #10b981; font-weight: 700; font-size: 13px; margin-right: 15px; }
-        .btn-delete {
-            background: #fff1f2; color: #e11d48; border: none; padding: 6px 12px;
-            border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px;
-        }
-        .btn-delete:hover { background: #e11d48; color: white; }
+        .btn-call { text-decoration: none; color: #10b981; font-weight: 700; margin-right: 15px; }
+        .btn-delete { background: #fff1f2; color: #e11d48; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+        /* MODAL STYLE (Bill Popup) */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background: white; color: #1e293b; margin: 5% auto; padding: 30px; border-radius: 20px; width: 500px; position: relative; }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #64748b; }
+        .bill-details p { border-bottom: 1px solid #f1f5f9; padding: 10px 0; margin: 0; display: flex; justify-content: space-between; }
+        .bill-details b { color: var(--secondary); }
     </style>
 </head>
 <body>
@@ -78,56 +73,60 @@
 
     <div class="main-content">
         <div class="page-header">
-            <h1 style="margin:0;">👥 Customer Database</h1>
-            <div class="search-container">
-                <input type="text" id="custSearch" class="search-input" placeholder="Search by name or phone..." onkeyup="filterCustomers()">
-            </div>
+            <h1>👥 Customer Database</h1>
+            <input type="text" id="custSearch" class="search-input" placeholder="Search by name or phone..." onkeyup="filterCustomers()">
         </div>
 
         <div class="card">
             <table>
                 <thead>
                     <tr>
-                        <th>Customer Name</th>
+                        <th>Customer Name (Click to View Bill)</th>
                         <th>Mobile Number</th>
                         <th>Location</th>
                         <th>Date Added</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="customerBody">
-                    </tbody>
+                <tbody id="customerBody"></tbody>
             </table>
         </div>
     </div>
 
+    <div id="billModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--secondary); margin-top: 0;">🧾 Invoice Summary</h2>
+            <div id="billDetails" class="bill-details">
+                </div>
+            <button onclick="window.print()" style="width: 100%; margin-top: 20px; padding: 12px; background: var(--secondary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;">🖨️ Re-Print Bill</button>
+        </div>
+    </div>
+
     <script>
-        // Database se data uthakar table mein dikhane ka function
         function loadCustomers() {
             const tbody = document.getElementById('customerBody');
-            // Hum 'billing' data se unique customers nikalenge
             const db = JSON.parse(localStorage.getItem("SubhyPower_MasterDB")) || { billing: [] };
-            
             tbody.innerHTML = ""; 
 
-            // Duplicate customers hatane ke liye Map ka use
-            const uniqueCustomers = [];
+            // Unique customers based on mobile
             const map = new Map();
-            for (const item of db.billing) {
+            const uniqueCustomers = [];
+            db.billing.forEach(item => {
                 if(!map.has(item.mobile)){
                     map.set(item.mobile, true);
                     uniqueCustomers.push(item);
                 }
-            }
+            });
 
             uniqueCustomers.forEach((cust, index) => {
                 const initials = cust.customer.split(' ').map(n => n[0]).join('').substring(0,2);
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
-                        <div class="user-info">
+                        <div class="user-info" onclick="viewBill('${cust.invNo}')">
                             <div class="avatar">${initials}</div>
-                            <div><b>${cust.customer}</b><br><small style="color: #64748b;">Verified Customer</small></div>
+                            <div><b>${cust.customer}</b><br><small style="color: #64748b;">Click to view last bill</small></div>
                         </div>
                     </td>
                     <td>+91 ${cust.mobile}</td>
@@ -142,22 +141,44 @@
             });
         }
 
-        // Search Filter Function
+        // Bill Dikhaane ka function
+        function viewBill(invNo) {
+            const db = JSON.parse(localStorage.getItem("SubhyPower_MasterDB"));
+            const bill = db.billing.find(b => b.invNo === invNo);
+
+            if(bill) {
+                const details = document.getElementById('billDetails');
+                details.innerHTML = `
+                    <p><span>Invoice No:</span> <b>${bill.invNo}</b></p>
+                    <p><span>Date:</span> <b>${bill.date}</b></p>
+                    <p><span>Customer:</span> <b>${bill.customer}</b></p>
+                    <p><span>Mobile:</span> <b>${bill.mobile}</b></p>
+                    <p><span>Product:</span> <b>${bill.product}</b></p>
+                    <p><span>Serial No:</span> <b>${bill.serial}</b></p>
+                    <p style="font-size: 1.2rem; border-top: 2px solid #eee;"><span>Grand Total:</span> <b>${bill.amount}</b></p>
+                `;
+                document.getElementById('billModal').style.display = "block";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('billModal').style.display = "none";
+        }
+
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('billModal')) closeModal();
+        }
+
         function filterCustomers() {
             let input = document.getElementById('custSearch').value.toUpperCase();
             let rows = document.getElementById('customerBody').getElementsByTagName('tr');
             for (let i = 0; i < rows.length; i++) {
-                let name = rows[i].getElementsByTagName('b')[0].innerText.toUpperCase();
-                let mobile = rows[i].getElementsByTagName('td')[1].innerText.toUpperCase();
-                if (name.indexOf(input) > -1 || mobile.indexOf(input) > -1) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
+                let text = rows[i].innerText.toUpperCase();
+                rows[i].style.display = text.indexOf(input) > -1 ? "" : "none";
             }
         }
 
-        // Page load hone par function chalao
         window.onload = loadCustomers;
     </script>
 </body>

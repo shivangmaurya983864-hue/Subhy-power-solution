@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Scanner | Subhy Power</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        body { background: #020617; color: white; font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: rgba(30, 41, 59, 0.7); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); }
+        h2 { color: #3b82f6; margin-bottom: 10px; }
+        .upload-area { border: 2px dashed #3b82f6; padding: 40px 20px; border-radius: 16px; cursor: pointer; margin: 20px 0; transition: 0.3s; }
+        .upload-area:hover { background: rgba(59, 130, 246, 0.1); }
+        #preview { width: 100%; border-radius: 12px; display: none; margin-top: 15px; border: 2px solid #3b82f6; }
+        .status { margin: 15px 0; font-weight: 600; color: #94a3b8; }
+        .result-box { background: #000; padding: 15px; border-radius: 12px; border: 1px solid #1e293b; min-height: 50px; word-break: break-all; margin-top: 10px; font-family: monospace; }
+        .btn-copy { background: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; width: 100%; display: none; }
+        .nav-back { color: #94a3b8; text-decoration: none; display: block; margin-top: 25px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>AI Serial Scanner</h2>
+        <p style="font-size: 13px; color: #94a3b8;">Photo khicho aur Serial Number apne aap nikal jayega</p>
+
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <span id="uploadText">📸 Click here to Scan Photo</span>
+            <input type="file" id="fileInput" accept="image/*" capture="camera" hidden onchange="processImage(this)">
+        </div>
+
+        <img id="preview">
+        <div id="status" class="status">Waiting for image...</div>
+        
+        <div style="text-align: left;">
+            <label style="font-size: 11px; color: #3b82f6; font-weight: 800;">EXTRACTED TEXT:</label>
+            <div id="result" class="result-box">No text detected yet.</div>
+        </div>
+
+        <button id="copyBtn" class="btn-copy" onclick="copySerial()">📋 Copy Serial Number</button>
+        
+        <a href="billing.html" class="nav-back">← Back to Billing</a>
+    </div>
+
+    <script>
+        async function processImage(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Preview image
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('preview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                document.getElementById('uploadText').innerText = "🔄 Change Photo";
+            };
+            reader.readAsDataURL(file);
+
+            const status = document.getElementById('status');
+            const resultBox = document.getElementById('result');
+            const copyBtn = document.getElementById('copyBtn');
+
+            status.innerText = "🌀 AI is reading text... (5-10 seconds)";
+            resultBox.innerText = "Processing...";
+
+            try {
+                const result = await Tesseract.recognize(file, 'eng');
+                const rawText = result.data.text;
+                resultBox.innerText = rawText;
+                
+                // Smart Logic: Find words that look like serial numbers (usually Alphanumeric)
+                // We look for patterns like S/N, Serial, or long codes
+                const lines = rawText.split('\n');
+                let foundSerial = "";
+                
+                lines.forEach(line => {
+                    // Cleaner logic: Find strings with numbers and letters, min 6 chars
+                    const match = line.match(/[A-Z0-9]{6,15}/g); 
+                    if(match) foundSerial = match[0];
+                });
+
+                if (foundSerial) {
+                    status.innerHTML = "✅ Found Serial: <span style='color:#10b981'>" + foundSerial + "</span>";
+                    copyBtn.style.display = "block";
+                    copyBtn.setAttribute('data-serial', foundSerial);
+                } else {
+                    status.innerText = "⚠️ Text read, but couldn't identify Serial. Copy manually below.";
+                }
+
+            } catch (err) {
+                status.innerText = "❌ Error reading image. Try again.";
+                console.error(err);
+            }
+        }
+
+        function copySerial() {
+            const serial = document.getElementById('copyBtn').getAttribute('data-serial');
+            navigator.clipboard.writeText(serial);
+            alert("Serial Number Copied: " + serial + "\nNow paste it in the Bill!");
+            window.location.href = "billing.html";
+        }
+    </script>
+</body>
+</html>
