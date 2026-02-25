@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Tracker | Subhy Power Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="database.js"></script>
+
+    <style>
+        :root {
+            --primary: #c21a09;
+            --secondary: #0a2e87;
+            --bg: #020617;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --danger-bg: #fee2e2;
+            --danger-text: #991b1b;
+        }
+
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; display: flex; color: white; }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px; background: rgba(10, 46, 135, 0.15); height: 100vh; position: fixed;
+            padding: 30px 20px; border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+        }
+
+        .sidebar h2 { color: white; font-size: 1.2rem; border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 40px; }
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px; display: block; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-weight: 600; }
+        .sidebar a:hover, .sidebar a.active { background: var(--secondary); color: white; }
+
+        .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
+
+        /* Content Card */
+        .card {
+            background: var(--card); color: var(--text); padding: 30px; border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+        .search-box {
+            background: #f1f5f9; border: 1px solid var(--border); padding: 12px 20px;
+            border-radius: 12px; width: 350px; outline: none; transition: 0.3s;
+        }
+
+        /* Modern Table */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 18px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        tr:hover { background: #fcfdfe; }
+
+        /* Status Badges */
+        .badge { padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; }
+        .status-active { background: var(--success-bg); color: var(--success-text); }
+        .status-expired { background: var(--danger-bg); color: var(--danger-text); }
+
+        .btn-delete {
+            background: #fee2e2; color: #dc2626; border: none; padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px;
+        }
+        .btn-delete:hover { background: #dc2626; color: white; }
+
+        .btn-backup {
+            background: var(--primary); color: white; border: none; padding: 12px 24px;
+            border-radius: 12px; font-weight: 700; cursor: pointer; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(194, 26, 9, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>SUBHY POWER</h2>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="billing.html">🧾 Create Invoice</a>
+        <a href="stock.html">📦 Inventory</a>
+        <a href="warranty.html" class="active">🛡️ Warranty</a>
+        <a href="customers.html">👥 Customers</a>
+        <a href="reports.html">📈 Reports</a>
+    </div>
+
+    <div class="main-content">
+        <button class="btn-backup" onclick="downloadMasterBackup()">📥 Download Secure Data Backup</button>
+        
+        <div class="card">
+            <div class="header-flex">
+                <h2 style="margin:0; color: var(--secondary);">🛡️ Warranty Tracker (Master Vault)</h2>
+                <input type="text" class="search-box" id="warrantySearch" placeholder="🔍 Search Serial No. or Customer..." onkeyup="filterWarranty()">
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Serial No</th>
+                        <th>Product Details</th>
+                        <th>Customer</th>
+                        <th>Purchase Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Admin Only</th>
+                    </tr>
+                </thead>
+                <tbody id="warrantyBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Data Load Function
+        function loadWarranty() {
+            const tbody = document.getElementById('warrantyBody');
+            // Master Database se data uthao
+            const db = JSON.parse(localStorage.getItem("SubhyPower_MasterDB")) || { warranty: [] };
+            
+            tbody.innerHTML = ""; // Clear current table
+
+            db.warranty.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><code style="font-weight: 700; color: var(--primary);">${item.serial || 'N/A'}</code></td>
+                    <td><b>${item.product || 'N/A'}</b></td>
+                    <td>${item.customer || 'N/A'}</td>
+                    <td>${item.pDate || 'N/A'}</td>
+                    <td>${item.eDate || 'N/A'}</td>
+                    <td><span class="badge status-active">● Active</span></td>
+                    <td>
+                        <button class="btn-delete" onclick="secureDelete('warranty', ${index})">🗑️ Delete Entry</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Search Filter
+        function filterWarranty() {
+            let input = document.getElementById('warrantySearch').value.toUpperCase();
+            let rows = document.getElementById('warrantyBody').getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                let text = rows[i].innerText.toUpperCase();
+                rows[i].style.display = text.indexOf(input) > -1 ? "" : "none";
+            }
+        }
+
+        // Run on page load
+        window.onload = loadWarranty;
+    </script>
+</body>
+</html>

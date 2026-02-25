@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subhy Power Solution | Premium ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="database.js"></script>
+
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --accent: #60a5fa;
+            --dark-bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: center;
+            height: 100vh; background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow: hidden;
+        }
+
+        /* Animated Background */
+        .bg-glow {
+            position: absolute; width: 500px; height: 500px; background: var(--primary);
+            filter: blur(150px); opacity: 0.15; z-index: -1; border-radius: 50%;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        .hero-container {
+            text-align: center; background: var(--glass); padding: 60px 100px;
+            border-radius: 32px; backdrop-filter: blur(20px); border: 1px solid var(--border);
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7); position: relative;
+        }
+
+        .owner-badge {
+            background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary);
+            color: var(--accent); padding: 6px 16px; border-radius: 100px;
+            font-size: 0.8rem; font-weight: 600; display: inline-block;
+            margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        .logo-icon {
+            font-size: 70px; margin-bottom: 15px; display: inline-block;
+            filter: drop-shadow(0 0 20px var(--primary));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        h1 { font-size: 3.2rem; margin: 0; font-weight: 800; letter-spacing: -2px; line-height: 1.1; }
+        h1 span { background: linear-gradient(to bottom right, #fff, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .tagline { color: #94a3b8; font-size: 1.2rem; margin: 20px 0 45px 0; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+        .nav-buttons { display: flex; gap: 25px; justify-content: center; }
+
+        .main-btn {
+            background: var(--primary); color: white; text-decoration: none;
+            padding: 18px 45px; border-radius: 16px; font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.5); display: flex; align-items: center; gap: 10px;
+        }
+
+        .main-btn:hover { transform: scale(1.05); background: #2563eb; }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.05); color: white; text-decoration: none;
+            padding: 18px 45px; border-radius: 16px; font-weight: 700;
+            border: 1px solid var(--border); transition: 0.3s;
+        }
+
+        .secondary-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: white; }
+
+        .footer-tag { position: absolute; bottom: 40px; color: #475569; font-size: 0.85rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="hero-container">
+        <div class="owner-badge">Welcome back, Akhilesh Kumar</div>
+        
+        <div class="logo-icon">⚡</div>
+        <h1>Subhy Power<br><span>Solutions</span></h1>
+        
+        <p class="tagline">Next-Gen Inventory, Warranty Tracker & GST Billing for Inverter Professionals.</p>
+
+        <div class="nav-buttons">
+            <a href="dashboard.html" class="main-btn">
+                <span>Enter Dashboard</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="billing.html" class="secondary-btn">New Invoice</a>
+        </div>
+    </div>
+
+    <div class="footer-tag">
+        <strong>SUBHY POWER SOLUTIONS ERP v2.0</strong><br>
+        <span>Securely hosted for optimal performance</span>
+    </div>
+
+    <script>
+        // Database Initialization
+        window.onload = function() {
+            if (!localStorage.getItem("SubhyPower_MasterDB")) {
+                const initialDB = {
+                    billing: [],
+                    stock: [],
+                    customers: [],
+                    warranty: []
+                };
+                localStorage.setItem("SubhyPower_MasterDB", JSON.stringify(initialDB));
+                console.log("System Initialized for Subhy Power.");
+            }
+        }
+    </script>
+</body>
+</html>
