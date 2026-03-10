@@ -1,186 +1,424 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory | Subhy Power Solution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="database.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        :root {
-            --primary: #c21a09;
-            --secondary: #0a2e87;
-            --bg: #020617;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
+<title>Inventory | Subhy Power Solution</title>
 
-        body {
-            background: var(--bg);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-            display: flex;
-            color: white;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
-        .sidebar {
-            width: 260px; background: rgba(10, 46, 135, 0.15); height: 100vh; position: fixed;
-            padding: 30px 20px; border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-        }
+<script src="database.js"></script>
 
-        .sidebar h2 { color: white; font-size: 1.2rem; border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 40px; }
-        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px; display: block; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-weight: 600; }
-        .sidebar a:hover, .sidebar a.active { background: var(--secondary); color: white; }
+<style>
 
-        .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
+:root{
+--primary:#3b82f6;
+--accent:#8b5cf6;
+--bg:#020617;
+--sidebar:#0f172a;
+--card-bg:rgba(30,41,59,0.4);
+--glass-border:rgba(255,255,255,0.06);
+--text-main:#f8fafc;
+--text-dim:#94a3b8;
+--success:#10b981;
+--warning:#f59e0b;
+--danger:#ef4444;
+}
 
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+body{
+background:var(--bg);
+color:var(--text-main);
+font-family:'Plus Jakarta Sans',sans-serif;
+margin:0;
+display:flex;
+min-height:100vh;
+}
 
-        .btn-add {
-            background: var(--secondary); color: white; border: none; padding: 12px 24px;
-            border-radius: 12px; font-weight: 700; cursor: pointer; display: flex;
-            align-items: center; gap: 8px; transition: 0.3s;
-        }
-        .btn-add:hover { background: var(--primary); transform: translateY(-2px); }
+.sidebar{
+width:280px;
+background:var(--sidebar);
+height:100vh;
+position:fixed;
+padding:40px 20px;
+border-right:1px solid var(--glass-border);
+display:flex;
+flex-direction:column;
+}
 
-        .card {
-            background: var(--card); color: var(--text); padding: 30px; border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
+.sidebar h2{
+font-size:1.4rem;
+font-weight:800;
+margin-bottom:50px;
+background:linear-gradient(to right,#fff,var(--primary));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-align:center;
+}
 
-        .filter-bar { display: flex; gap: 15px; margin-bottom: 25px; }
-        .search-input {
-            flex: 1; padding: 12px 18px; border: 1px solid var(--border);
-            border-radius: 10px; font-family: inherit; outline: none;
-        }
+.sidebar a{
+color:var(--text-dim);
+text-decoration:none;
+padding:14px 18px;
+display:flex;
+align-items:center;
+gap:12px;
+border-radius:12px;
+margin-bottom:8px;
+font-weight:600;
+}
 
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 18px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-        tr:hover { background: #fcfdfe; }
+.sidebar a:hover,
+.sidebar a.active{
+background:rgba(59,130,246,0.1);
+color:#fff;
+}
 
-        .badge { padding: 6px 12px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
+.main-content{
+margin-left:280px;
+padding:50px;
+width:calc(100% - 280px);
+}
 
-        .stock-count { font-weight: 700; font-size: 15px; }
-        .btn-del { color: var(--danger); border: none; background: none; cursor: pointer; font-weight: 600; }
-    </style>
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:flex-end;
+margin-bottom:45px;
+}
+
+.page-header h1{
+font-family:'Space Grotesk';
+font-size:2.6rem;
+margin:0;
+}
+
+.btn-add{
+background:linear-gradient(135deg,var(--primary),var(--accent));
+color:white;
+border:none;
+padding:16px 30px;
+border-radius:16px;
+font-weight:800;
+cursor:pointer;
+}
+
+.inventory-card{
+background:var(--card-bg);
+border-radius:30px;
+padding:35px;
+border:1px solid var(--glass-border);
+}
+
+.search-input{
+width:100%;
+background:#111;
+border:1px solid var(--glass-border);
+padding:15px;
+border-radius:12px;
+color:white;
+margin-bottom:25px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+text-align:left;
+padding:10px;
+color:var(--text-dim);
+font-size:12px;
+}
+
+td{
+padding:16px 10px;
+border-top:1px solid var(--glass-border);
+}
+
+.type-badge{
+background:#222;
+padding:5px 10px;
+border-radius:8px;
+font-size:12px;
+}
+
+.status-pill{
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:700;
+}
+
+.available{background:rgba(16,185,129,0.1);color:var(--success);}
+.critical{background:rgba(245,158,11,0.1);color:var(--warning);}
+.depleted{background:rgba(239,68,68,0.1);color:var(--danger);}
+
+.modal-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-overlay.active{
+display:flex;
+}
+
+.modal-card{
+background:#0f172a;
+padding:40px;
+border-radius:20px;
+width:400px;
+}
+
+.form-input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid var(--glass-border);
+background:#020617;
+color:white;
+margin-bottom:15px;
+}
+
+.btn-confirm{
+width:100%;
+padding:14px;
+background:var(--primary);
+border:none;
+border-radius:10px;
+color:white;
+font-weight:700;
+cursor:pointer;
+margin-top:10px;
+}
+
+.btn-discard{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:transparent;
+border:none;
+color:var(--text-dim);
+cursor:pointer;
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="sidebar">
-        <h2>SUBHY POWER</h2>
-        <a href="dashboard.html">📊 Dashboard</a>
-        <a href="billing.html">🧾 Create Invoice</a>
-        <a href="stock.html" class="active">📦 Inventory</a>
-        <a href="warranty.html">🛡️ Warranty</a>
-        <a href="customers.html">👥 Customers</a>
-        <a href="reports.html">📈 Reports</a>
-    </div>
+<div class="sidebar">
 
-    <div class="main-content">
-        <div class="page-header">
-            <h1 style="margin:0;">📦 Stock Management</h1>
-            <button class="btn-add" onclick="addNewProduct()"><span>+</span> Add New Stock</button>
-        </div>
+<h2>SUBHY POWER</h2>
 
-        <div class="card">
-            <div class="filter-bar">
-                <input type="text" id="stockSearch" class="search-input" placeholder="🔍 Search product or brand..." onkeyup="filterStock()">
-            </div>
+<a href="dashboard.html">📊 Dashboard</a>
+<a href="billing.html">🧾 Create Invoice</a>
+<a href="stock.html" class="active">📦 Inventory</a>
+<a href="warranty.html">🛡️ Warranty</a>
+<a href="customers.html">👥 Customers</a>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product Details</th>
-                        <th>Brand</th>
-                        <th>HSN Code</th>
-                        <th>In Stock</th>
-                        <th>Unit Price</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="stockTableBody">
-                    </tbody>
-            </table>
-        </div>
-    </div>
+<div style="margin-top:auto">
+<a href="index.html" style="color:var(--danger)">🚪 Logout</a>
+</div>
 
-    <script>
-        // Load Stock from Database
-        function loadInventory() {
-            const tbody = document.getElementById('stockTableBody');
-            const db = JSON.parse(localStorage.getItem("SubhyPower_MasterDB")) || { stock: [] };
-            tbody.innerHTML = "";
+</div>
 
-            db.stock.forEach((item, index) => {
-                let statusBadge = "";
-                let countClass = "";
-                
-                // Automatic Status Logic
-                if (item.qty <= 0) {
-                    statusBadge = '<span class="badge badge-danger">Out of Stock</span>';
-                    countClass = "low-stock";
-                } else if (item.qty < 5) {
-                    statusBadge = '<span class="badge badge-warning">Low Stock</span>';
-                    countClass = "low-stock";
-                } else {
-                    statusBadge = '<span class="badge badge-success">In Stock</span>';
-                }
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td><b>${item.name}</b></td>
-                        <td><span style="color: var(--secondary); font-weight: 600;">${item.brand || 'N/A'}</span></td>
-                        <td>${item.hsn}</td>
-                        <td><span class="stock-count ${countClass}">${item.qty} Units</span></td>
-                        <td>₹${item.price}</td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <button class="btn-del" onclick="secureDelete('stock', ${index})">🗑️ Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
+<div class="main-content">
 
-        // Add Product Function
-        function addNewProduct() {
-            const name = prompt("Enter Product Name (e.g., 150Ah Battery):");
-            if (!name) return;
-            const brand = prompt("Enter Brand (Luminous/Exide):");
-            const hsn = prompt("Enter HSN Code:");
-            const qty = parseInt(prompt("Enter Opening Stock Quantity:"));
-            const price = prompt("Enter Unit Price (₹):");
+<div class="page-header">
 
-            if (name && qty >= 0) {
-                saveData('stock', { name, brand, hsn, qty, price });
-                loadInventory();
-            } else {
-                alert("Invalid input!");
-            }
-        }
+<h1>Asset Inventory</h1>
 
-        // Search Function
-        function filterStock() {
-            let input = document.getElementById('stockSearch').value.toUpperCase();
-            let rows = document.getElementById('stockTableBody').getElementsByTagName('tr');
-            for (let row of rows) {
-                row.style.display = row.innerText.toUpperCase().includes(input) ? "" : "none";
-            }
-        }
+<button class="btn-add" onclick="toggleModal(true)">
++ REGISTER ASSET
+</button>
 
-        // Initialize
-        window.onload = loadInventory;
-    </script>
+</div>
+
+
+<div class="inventory-card">
+
+<input type="text" id="stockSearch" class="search-input" placeholder="Search..." onkeyup="filterStock()">
+
+<table>
+
+<thead>
+<tr>
+<th>Product</th>
+<th>Type</th>
+<th>Brand</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="stockTableBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="modal-overlay" id="productModal">
+
+<div class="modal-card">
+
+<h2>Add Product</h2>
+
+<input id="p_name" class="form-input" placeholder="Product name">
+
+<select id="p_type" class="form-input">
+<option>Solar Battery</option>
+<option>Inverter</option>
+<option>Normal Battery</option>
+<option>Solar Panel</option>
+<option>Combo Kit</option>
+<option>Other</option>
+</select>
+
+<input id="p_brand" class="form-input" placeholder="Brand">
+
+<input id="p_qty" type="number" class="form-input" placeholder="Qty">
+
+<input id="p_price" type="number" class="form-input" placeholder="Price">
+
+<button class="btn-confirm" onclick="handleSave()">
+ADD TO INVENTORY
+</button>
+
+<button class="btn-discard" onclick="discardEntry()">
+Discard Entry
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+function toggleModal(show){
+document.getElementById("productModal")
+.classList.toggle("active",show)
+}
+
+function discardEntry(){
+
+["p_name","p_brand","p_qty","p_price"].forEach(id=>{
+document.getElementById(id).value=""
+})
+
+toggleModal(false)
+
+}
+
+function loadInventory(){
+
+const db=JSON.parse(localStorage.getItem(DB_NAME))||{stock:[]}
+
+const tbody=document.getElementById("stockTableBody")
+
+tbody.innerHTML=""
+
+if(db.stock.length===0){
+
+tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px">No inventory items</td></tr>`
+return
+}
+
+db.stock.forEach((item,index)=>{
+
+let qty=parseInt(item.qty)||0
+
+let status="available"
+let text="Good"
+
+if(qty<=0){status="depleted";text="Out"}
+else if(qty<5){status="critical";text="Low"}
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${item.name}</td>
+<td><span class="type-badge">${item.type||"N/A"}</span></td>
+<td>${(item.brand||"N/A").toUpperCase()}</td>
+<td>${qty}</td>
+<td>₹${Number(item.price||0).toLocaleString("en-IN")}</td>
+
+<td>
+<span class="status-pill ${status}">
+${text}
+</span>
+</td>
+
+<td>
+<button onclick="deleteProduct(${index})">🗑️</button>
+</td>
+
+</tr>
+
+`
+
+})
+
+}
+
+function handleSave(){
+
+const name=document.getElementById("p_name").value.trim()
+const type=document.getElementById("p_type").value
+const brand=document.getElementById("p_brand").value.trim()
+const qty=parseInt(document.getElementById("p_qty").value)
+const price=parseFloat(document.getElementById("p_price").value)
+
+if(!name||isNaN(qty)||isNaN(price)){
+alert("All fields required")
+return
+}
+
+saveData("stock",{name,type,brand,qty,price})
+
+discardEntry()
+
+loadInventory()
+
+}
+
+function deleteProduct(index){
+
+if(confirm("Delete product?")){
+secureDelete("stock",index)
+}
+
+}
+
+function filterStock(){
+
+const input=document.getElementById("stockSearch").value.toUpperCase()
+
+document.querySelectorAll("#stockTableBody tr").forEach(row=>{
+row.style.display=row.innerText.toUpperCase().includes(input)?"":"none"
+})
+
+}
+
+window.onload=loadInventory
+
+</script>
+
 </body>
 </html>
